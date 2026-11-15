@@ -1,5 +1,9 @@
 # Earth Jukebox
 
+## ▶ [Open the live app](https://av4an77.github.io/earth-jukebox/)
+
+**Live app:** https://av4an77.github.io/earth-jukebox/ · **Slides (PDF):** [slides.pdf](https://github.com/av4an77/earth-jukebox/blob/main/slides.pdf) · **Slides (web):** https://av4an77.github.io/earth-jukebox/slides.html
+
 **Listen to our changing planet.** NASA Earth Information Center visualizations, and live NASA satellite imagery that updates itself, turned into music in real time.
 
 Built for the 2026 NASA Space Apps Challenge: *The Earth Information Jukebox*.
