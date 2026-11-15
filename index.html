@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Earth Jukebox</title>
+<!-- Code in this file was written with the assistance of an AI coding assistant (Anthropic Claude). All imagery is NASA's. No AI-generated images, video or audio samples are used: sound is synthesized live by this code. -->
+<meta name="generator" content="Written with AI assistance (Anthropic Claude)">
+<meta name="description" content="Hear NASA Earth Information Center visualizations and live NASA satellite imagery as music, computed in real time. Built for sighted, blind and low-vision listeners.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#efe6d3; --paper2:#e6dbc4; --ink:#16130e; --red:#df3d1b; --mustard:#e9ad1f; --teal:#1d6d68; --dim:#5d5546;
+  --sans:"Archivo","Helvetica Neue",Arial,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;color:var(--ink);font:16px/1.5 var(--sans);background-color:var(--paper);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .08 0 0 0 0 .05 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+a{color:var(--ink);text-decoration-thickness:2px;text-underline-offset:3px}
+a:hover{color:var(--red)}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:-999px;top:0;background:var(--ink);color:var(--paper);padding:10px 14px;z-index:20;font:600 13px var(--mono)}
+.skip:focus{left:8px;top:8px}
+.mono{font-family:var(--mono)}
+
+/* ---- masthead ---- */
+html{scroll-behavior:smooth}
+.hero{height:180vh;background:#000;position:relative}
+.hero-pin{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center;color:var(--paper)}
+.hero-img{position:absolute;inset:-4%;background:#000 url(media/aerosols.png) center/cover no-repeat;transform:scale(1.25);filter:brightness(.8);will-change:transform,filter}
+.hero-txt{position:relative;text-align:center;padding:0 4vw;will-change:transform,opacity}
+.kicker{font:500 clamp(10px,1vw,13px)/1.4 var(--mono);text-transform:uppercase;letter-spacing:.22em;margin:0 0 3vh}
+.hword{font:900 clamp(50px,13.2vw,250px)/.8 var(--sans);font-stretch:125%;text-transform:uppercase;letter-spacing:-.045em;display:flex;flex-direction:column;align-items:center}
+.hword span:first-child{color:var(--paper);text-shadow:0 0 60px #0008}
+.hword span:last-child{color:transparent;-webkit-text-stroke:clamp(1.5px,.3vw,5px) var(--paper)}
+.hsub{font:600 clamp(17px,2.1vw,30px)/1.2 var(--sans);margin:4vh 0 3vh}
+.hero .btn,.scrub .btn{border-color:var(--paper);box-shadow:4px 4px 0 var(--red);text-decoration:none;display:inline-flex;align-items:center}
+.cue{position:absolute;bottom:3.5vh;left:50%;transform:translateX(-50%);font:500 11px var(--mono);letter-spacing:.3em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px}
+.cue::after{content:"";width:2px;height:38px;background:var(--paper);animation:cue 1.6s ease-in-out infinite;transform-origin:top}
+@keyframes cue{0%{transform:scaleY(0)}60%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+.scrub{height:380vh;background:#0c0a07;color:var(--paper);position:relative}
+.scrub-pin{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;grid-template-rows:auto 1fr auto;justify-items:center;align-items:center;padding:3vh 4vw;gap:2vh}
+.scrub-head{font:500 12px var(--mono);letter-spacing:.2em;text-transform:uppercase;display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
+.scrub-stage{position:relative;width:min(92vw,calc((100vh - 290px)*1.7778));aspect-ratio:16/9;outline:2px solid #efe6d333}
+.scrub-stage img,.scrub-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.scrub-cards{position:relative;width:min(92vw,820px);min-height:128px}
+.scard{position:absolute;inset:0;display:grid;grid-template-columns:auto 1fr;gap:4px 18px;align-items:start;opacity:0;transform:translateY(26px);transition:opacity .45s,transform .45s cubic-bezier(.2,.7,.1,1)}
+.scard.on{opacity:1;transform:none}
+.scard b{grid-row:1/3;font:900 clamp(40px,6vw,76px)/.8 var(--sans);font-stretch:125%;color:transparent;-webkit-text-stroke:2px var(--red)}
+.scard h3{margin:0;font:800 clamp(19px,2.6vw,34px)/1.02 var(--sans);font-stretch:112%;text-transform:uppercase}
+.scard p{margin:0;font:500 clamp(14px,1.3vw,18px)/1.4 var(--sans);color:#d9cfb9;max-width:52ch}
+.rv{opacity:0;transform:translateY(46px);transition:opacity .8s,transform .8s cubic-bezier(.2,.7,.1,1)}
+.rv.in{opacity:1;transform:none}
+.mast{display:grid;grid-template-columns:1fr auto;gap:8px 28px;align-items:end;padding:22px clamp(16px,3vw,40px) 14px;border-bottom:6px solid var(--ink)}
+.word{font:900 clamp(30px,4.4vw,62px)/.9 var(--sans);font-stretch:125%;text-transform:uppercase;letter-spacing:-.035em;display:flex;flex-wrap:wrap;gap:0 .18em}
+.word .jb{color:transparent;-webkit-text-stroke:clamp(1.5px,.28vw,4px) var(--ink);position:relative}
+.word .jb::after{content:"";position:absolute;left:0;right:0;bottom:.09em;height:.1em;background:var(--red)}
+.tag{grid-column:1;margin:10px 0 0;max-width:46ch;font:500 clamp(15px,1.4vw,19px)/1.35 var(--sans)}
+.issue{grid-column:2;grid-row:1/3;align-self:end;text-align:right;font:500 12px/1.7 var(--mono);text-transform:uppercase;letter-spacing:.08em}
+.issue b{display:inline-block;background:var(--ink);color:var(--paper);padding:1px 8px;font-weight:600}
+.issue span{display:block}
+
+/* ---- layout ---- */
+.wrap{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:clamp(18px,2.4vw,36px);padding:clamp(16px,2.4vw,32px) clamp(16px,3vw,40px)}
+main{min-width:0}
+.eyebrow{font:600 11.5px/1 var(--mono);text-transform:uppercase;letter-spacing:.14em;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:"";width:10px;height:10px;background:var(--red);flex:none}
+
+/* ---- screen ---- */
+.screen{background:var(--ink);padding:10px 10px 0;box-shadow:8px 8px 0 var(--red)}
+.stage{position:relative;background:#000;overflow:hidden;aspect-ratio:16/9;max-height:62vh;margin:0 auto}
+.stage video,.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.stage canvas#overlay{position:absolute;inset:0;width:100%;height:100%;cursor:pointer;touch-action:pan-y}
+.stage.exploring canvas#overlay{cursor:crosshair;touch-action:none}
+.badge,.datebadge{position:absolute;top:0;font:500 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;padding:7px 9px;pointer-events:none}
+.badge{left:0;background:var(--paper);color:var(--ink)}
+.datebadge{right:0;background:var(--red);color:#fff6e6;max-width:70%}
+canvas#spec{display:block;width:100%;height:46px;background:var(--ink)}
+.ruler{display:flex;justify-content:space-between;color:var(--paper);font:500 10.5px/1 var(--mono);letter-spacing:.12em;padding:6px 2px 8px;text-transform:uppercase;
+  background:repeating-linear-gradient(90deg,transparent 0 calc(3.125% - 1px),#efe6d355 calc(3.125% - 1px) 3.125%) top/100% 5px no-repeat}
+.start{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:14px;background:rgba(10,8,5,.78);z-index:2;text-align:center;padding:16px}
+.start p{margin:0;color:var(--paper);max-width:30ch;font:800 clamp(20px,3vw,34px)/1.05 var(--sans);font-stretch:112%;text-transform:uppercase}
+.start small{display:block;font:500 13px/1.4 var(--mono);text-transform:none;letter-spacing:0;margin-top:10px;color:#d9cfb9}
+.start .row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+
+/* ---- keys (buttons) ---- */
+button{font:inherit;color:inherit}
+.btn{appearance:none;background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:0;min-height:48px;padding:0 16px;cursor:pointer;
+  font:600 13px/1 var(--mono);text-transform:uppercase;letter-spacing:.07em;box-shadow:4px 4px 0 var(--ink);transition:transform .06s,box-shadow .06s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none}
+.btn:hover{background:var(--mustard)}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+.btn.primary{background:var(--red);color:#fff6e6;min-width:104px}
+.btn.primary:hover{background:#c5310f}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.btn.primary[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.btn.rec[aria-pressed="true"]{background:var(--red);color:#fff6e6}
+.start .btn{box-shadow:4px 4px 0 var(--red);min-height:54px;font-size:14px}
+.start .btn.primary{box-shadow:4px 4px 0 var(--paper)}
+.start .btn:active{box-shadow:none}
+
+/* ---- deck ---- */
+.deck{display:grid;grid-template-columns:auto 1fr;gap:16px 18px;align-items:center;margin-top:26px;padding:14px 0;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.disc{width:92px;height:92px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:radial-gradient(circle,transparent 0 21px,#000 21px 22px,transparent 22px),repeating-radial-gradient(circle,#191612 0 2px,#2b2620 2px 3px)}
+.disc .lab{width:42px;height:42px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;background:var(--mustard);font:600 12px/1 var(--mono);color:#fff;text-shadow:0 0 2px #000,0 0 2px #000,0 1px 3px #000}
+.disc.spin{animation:spin 1.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.np{min-width:0}
+.np .eyebrow{margin-bottom:4px}
+.np h2{margin:0 0 10px;font:800 clamp(20px,2.3vw,30px)/1.02 var(--sans);font-stretch:110%;text-transform:uppercase;letter-spacing:-.01em}
+.transport{display:flex;flex-wrap:wrap;gap:12px}
+.dials{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;font:500 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.07em}
+.ctl{display:flex;align-items:center;gap:8px;min-height:36px}
+input[type=range]{accent-color:var(--ink);width:120px;height:28px}
+input[type=checkbox]{accent-color:var(--ink);width:20px;height:20px}
+select{background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:0;min-height:40px;padding:0 6px;font:500 12px var(--mono);max-width:170px}
+input[type=date],input[type=month]{background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:0;padding:0 8px;min-height:44px;font:500 13px var(--mono)}
+
+.livebar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:14px;padding:12px;border:2px solid var(--ink);background:var(--paper2);font:500 12px/1.4 var(--mono)}
+.livebar .ctl{text-transform:uppercase;letter-spacing:.07em}
+.live{font:600 10px/1 var(--mono);background:var(--red);color:#fff6e6;padding:3px 5px;letter-spacing:.1em;font-style:normal;text-transform:uppercase}
+.livebar .note{color:var(--dim);flex:1 1 200px}
+
+.hearing{margin-top:22px}
+.caption{font:500 clamp(17px,1.5vw,21px)/1.35 var(--sans);border-left:10px solid var(--red);padding:2px 0 2px 14px;min-height:54px}
+.caption b{font-weight:800}
+
+.keys{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 0;align-items:stretch}
+.keys .lbl{flex:1 0 100%}
+.chip{appearance:none;display:inline-flex;align-items:center;gap:10px;background:var(--paper);border:2px solid var(--ink);border-radius:0;padding:0 12px 0 0;min-height:48px;cursor:pointer;
+  font:600 13px/1.15 var(--sans);text-align:left;box-shadow:3px 3px 0 var(--ink);transition:transform .06s,box-shadow .06s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.chip:hover{background:var(--mustard)}
+.chip:active{transform:translate(3px,3px);box-shadow:none}
+.chip i{align-self:stretch;width:30px;border-right:2px solid var(--ink);display:block}
+.chip .kn{font:600 11px var(--mono);color:var(--dim)}
+.chip em{display:block;font:500 11px var(--mono);font-style:normal;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+
+.meters{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
+.meter .k{font:500 10.5px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.08em;min-height:2.4em}
+.meter .bar{height:14px;border:2px solid var(--ink);margin-top:6px;position:relative;background:var(--paper)}
+.meter .bar i{display:block;height:100%;width:0;background:var(--ink);transition:width .15s}
+.meter .bar::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),var(--paper) calc(10% - 1px) 10%)}
+.meter .v{font:500 12px var(--mono);margin-top:4px}
+
+/* ---- selections: jukebox title strips ---- */
+nav h2{font:600 11.5px/1 var(--mono);text-transform:uppercase;letter-spacing:.14em;margin:22px 0 10px;display:flex;gap:8px;align-items:center}
+nav h2:first-child{margin-top:0}
+nav h2 b{background:var(--ink);color:var(--paper);padding:3px 6px;font-weight:600}
+.track{appearance:none;display:grid;grid-template-columns:52px 1fr 14px;align-items:stretch;width:100%;text-align:left;background:#f8f1e2;border:2px solid var(--ink);border-radius:0;padding:0;margin:0 0 9px;cursor:pointer;min-height:58px;
+  transition:transform .06s,box-shadow .06s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.track .code{display:grid;place-items:center;background:var(--ink);color:var(--paper);font:600 16px/1 var(--mono)}
+.track .tt{padding:8px 10px;display:block;border-top:5px solid var(--red);border-bottom:5px solid var(--red)}
+.track.live-strip .tt{border-color:var(--teal)}
+.track.own-strip .tt{border-color:var(--mustard)}
+.track .tt b{display:block;font:800 14.5px/1.12 var(--sans);font-stretch:108%;text-transform:uppercase;letter-spacing:.005em}
+.track .tt small{display:block;font:500 11.5px/1.3 var(--mono);color:var(--dim);margin-top:3px}
+.track .sw{display:block;border-left:2px solid var(--ink)}
+.track:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.track:active{transform:none;box-shadow:none}
+.track[aria-current="true"]{background:var(--mustard);transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--ink)}
+.track[aria-current="true"] .code{background:var(--red);color:#fff6e6}
+.dial-hint{font:500 12px/1.5 var(--mono);color:var(--dim);margin:2px 0 0}
+.drop{display:block;border:2px dashed var(--ink);padding:14px;font:600 12.5px/1.4 var(--mono);text-transform:uppercase;letter-spacing:.05em;cursor:pointer;text-align:center;min-height:48px}
+.drop small{display:block;text-transform:none;letter-spacing:0;font-weight:500;color:var(--dim);margin-top:4px}
+.drop:hover{background:var(--mustard)}
+input#file:focus-visible+.x,.drop:focus-within{outline:3px solid var(--red)}
+
+/* ---- notes ---- */
+.notes{display:grid;grid-template-columns:1.15fr 1.15fr .8fr;gap:clamp(18px,2.4vw,36px);padding:8px clamp(16px,3vw,40px) 30px}
+.notes section{border-top:6px solid var(--ink);padding-top:14px;min-width:0}
+.notes h2{font:800 22px/1.05 var(--sans);font-stretch:110%;text-transform:uppercase;margin:0 0 10px}
+.notes p{margin:0 0 10px;font-size:15.5px}
+.legend{height:16px;border:2px solid var(--ink);margin:12px 0 4px}
+.legend-l{display:flex;justify-content:space-between;font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.srcline{font:500 12px/1.5 var(--mono)}
+table.map{width:100%;border-collapse:collapse;font-size:14.5px}
+table.map td,table.map th{border-bottom:1px dashed var(--ink);padding:7px 6px 7px 0;text-align:left;vertical-align:top}
+table.map th{font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.08em;border-bottom:2px solid var(--ink)}
+.kbd{list-style:none;margin:0;padding:0;font-size:14.5px}
+.kbd li{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px dashed var(--ink)}
+kbd{font:600 12px var(--mono);border:2px solid var(--ink);padding:1px 6px;background:#f8f1e2;white-space:nowrap;min-width:54px;text-align:center}
+footer{border-top:2px solid var(--ink);margin:0 clamp(16px,3vw,40px);padding:14px 0 28px;font:500 11.5px/1.6 var(--mono);color:var(--dim)}
+
+@media (max-width:980px){
+  .wrap{grid-template-columns:1fr}
+  .notes{grid-template-columns:1fr}
+  .mast{grid-template-columns:1fr}
+  .issue{grid-column:1;grid-row:auto;text-align:left;display:flex;flex-wrap:wrap;gap:4px 14px}
+  .screen{box-shadow:5px 5px 0 var(--red)}
+  nav #tracksEIC,nav #tracksLive{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0 12px}
+}
+@media (max-width:560px){
+  .meters{grid-template-columns:repeat(2,1fr)}
+  .disc{width:64px;height:64px}
+  .disc .lab{width:32px;height:32px;font-size:10px}
+  .transport .btn{flex:1 1 auto;padding:0 10px}
+  .stage{aspect-ratio:3/2}
+  .ruler span:nth-child(2){display:none}
+  .deck{grid-template-columns:1fr}
+  .disc{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#player">Skip to the player</a>
+<section class="hero" id="hero" aria-label="Introduction">
+  <div class="hero-pin">
+    <div class="hero-img" id="heroImg" role="img" aria-label="NASA map of particles in Earth's air: purple dust over the Atlantic, red smoke over Africa, green pollution and blue-white sea salt."></div>
+    <div class="hero-txt" id="heroTxt">
+      <p class="kicker">The Earth Information Jukebox · built on NASA open data</p>
+      <div class="hword" aria-hidden="true"><span>Earth</span><span>Jukebox</span></div>
+      <p class="hsub">What does our planet sound like?</p>
+      <a class="btn primary" href="#player">Open the jukebox</a>
+    </div>
+    <div class="cue" aria-hidden="true">Scroll</div>
+  </div>
+</section>
+<section class="scrub" id="scrub" aria-label="How it works">
+  <div class="scrub-pin">
+    <div class="scrub-head"><span>How a picture becomes music</span><button class="btn" id="scrubSound">Turn sound on, then scroll to play</button><span id="scrubRead" aria-hidden="true"></span></div>
+    <div class="scrub-stage"><img id="scrubImg" src="media/aerosols.png" alt="The same NASA aerosol map, with a needle that moves across it as you scroll."><canvas id="scrubCv" aria-hidden="true"></canvas></div>
+    <div class="scrub-cards">
+      <div class="scard on"><b>01</b><h3>A needle crosses the picture</h3><p>West to east, like a record under a stylus. Where something is on the map decides when you hear it.</p></div>
+      <div class="scard"><b>02</b><h3>Each kind of data is an instrument</h3><p>Desert dust is a warm horn. Smoke from fires is a low growl. Pollution is plucked. Sea salt rings like bells.</p></div>
+      <div class="scard"><b>03</b><h3>More means higher and louder</h3><p>The stronger the reading, the higher the note. You are playing the atmosphere of 19 August 2025 with your scroll wheel.</p></div>
+    </div>
+  </div>
+</section>
+<header class="mast rv">
+  <h1 class="sr">Earth Jukebox</h1>
+  <div class="word" aria-hidden="true"><span>Earth</span><span class="jb">Jukebox</span></div>
+  <p class="tag">Ten selections. Every note is worked out, while it plays, from NASA pictures of our planet. Nothing here is a recording.</p>
+  <div class="issue" aria-hidden="true"><b>Listening station</b><span>Sight · Sound · Speech · Touch</span><span>Pick a letter and a number</span></div>
+</header>
+
+<div class="wrap rv">
+  <main id="player" tabindex="-1">
+    <div class="screen">
+      <div class="stage" id="stage">
+        <video id="vid" muted loop playsinline aria-hidden="true"></video>
+        <img id="img" alt="" crossorigin="anonymous" hidden>
+        <img id="coast" alt="" aria-hidden="true" hidden style="filter:invert(1);opacity:.5;pointer-events:none;background:transparent">
+        <canvas id="overlay" aria-hidden="true"></canvas>
+        <span class="badge" id="badge">Scan · tap to pause · swipe for next</span>
+        <span class="datebadge" id="dateBadge" hidden></span>
+        <div class="start" id="startOverlay">
+          <p>What does the planet sound like?<small>Turn your sound on. Every note is computed from the NASA image on screen.</small></p>
+          <div class="row">
+            <button class="btn primary" id="startBtn">Start listening</button>
+            <button class="btn" id="tourBtn0">Guided tour</button>
+          </div>
+        </div>
+      </div>
+      <canvas id="spec" aria-hidden="true"></canvas>
+      <div class="ruler" aria-hidden="true"><span>West</span><span>the needle travels west to east</span><span>East</span></div>
+    </div>
+
+    <div class="deck">
+      <div class="disc" id="logo" aria-hidden="true"><div class="lab" id="discLab"><span id="npCode">A1</span></div></div>
+      <div class="np">
+        <p class="eyebrow">Now on the turntable</p>
+        <h2 id="npTitle">&nbsp;</h2>
+        <div class="transport" role="group" aria-label="Player controls">
+          <button class="btn primary" id="playBtn" aria-pressed="false">Play</button>
+          <button class="btn" id="tourBtn" aria-pressed="false" title="Plays every selection with a spoken introduction">Guided tour</button>
+          <button class="btn" id="exploreBtn" aria-pressed="false" title="Touch or move over the image to hear any spot">Explore by touch</button>
+          <button class="btn" id="describeBtn">Describe</button>
+          <button class="btn rec" id="recBtn" aria-pressed="false">Record</button>
+        </div>
+      </div>
+      <div class="dials">
+        <label class="ctl">Tempo <input id="tempo" type="range" min="50" max="140" value="84" aria-label="Tempo in beats per minute"><span id="tempoV">84</span></label>
+        <label class="ctl">Volume <input id="vol" type="range" min="0" max="100" value="75" aria-label="Volume"></label>
+        <label class="ctl"><input type="checkbox" id="narrate" checked> Spoken captions</label>
+        <label class="ctl" id="voiceCtl" hidden>Voice <select id="voiceSel" aria-label="Voice for spoken captions"></select></label>
+      </div>
+    </div>
+
+    <div class="livebar" id="liveBar" hidden>
+      <span class="live">Live data</span>
+      <button class="btn" id="latestBtn" aria-pressed="true" title="Show the newest image NASA has published and keep it updated">Newest</button>
+      <label class="ctl" id="dayCtl">or a date <input type="date" id="day" min="2012-01-01" aria-label="Satellite image date"></label>
+      <label class="ctl" id="monCtl">Month <input type="month" id="mon" min="1981-01" aria-label="Month of data"></label>
+      <button class="btn" id="yearBtn" aria-pressed="false">Play a whole year</button>
+      <span class="note">Fetched from NASA GIBS. On “Newest”, this page checks for new data every 5 minutes.</span>
+    </div>
+
+    <div class="hearing">
+      <p class="eyebrow">What you are hearing</p>
+      <div class="caption" id="caption" aria-live="polite">Pick a selection and press <b>Play</b>. A needle sweeps the picture from west to east, and each spot of data it crosses becomes a note.</div>
+    </div>
+
+    <div class="keys" id="keys" role="group" aria-label="Sound key. Press a button to hear what each sound means."></div>
+
+    <div class="meters" aria-hidden="true">
+      <div class="meter"><div class="k">Brightness → loudness</div><div class="bar"><i id="mB"></i></div><div class="v" id="vB">–</div></div>
+      <div class="meter"><div class="k">Data value → pitch</div><div class="bar"><i id="mW"></i></div><div class="v" id="vW">–</div></div>
+      <div class="meter"><div class="k">Change → rhythm</div><div class="bar"><i id="mM"></i></div><div class="v" id="vM">–</div></div>
+      <div class="meter"><div class="k">Notes playing</div><div class="bar"><i id="mN"></i></div><div class="v" id="vN">–</div></div>
+    </div>
+  </main>
+
+  <nav aria-label="Selections">
+    <h2 id="tl1"><b>Side A</b> Earth Information Center</h2>
+    <div id="tracksEIC" role="list" aria-labelledby="tl1"></div>
+    <h2 id="tl2"><b>Side B</b> Live from orbit · updates itself</h2>
+    <div id="tracksLive" role="list" aria-labelledby="tl2"></div>
+    <h2 id="tl3"><b>Side C</b> Bring your own picture</h2>
+    <div id="tracksOwn" role="list" aria-labelledby="tl3"></div>
+    <label class="drop" for="file">Play any image or video<small>For example a frame saved from NASA’s visualization studio. It never leaves your device.</small></label>
+    <input class="sr" type="file" id="file" accept="image/*,video/*">
+    <p class="dial-hint">On a keyboard, dial a selection like a real jukebox: press a letter, then a number. <b>B</b> then <b>1</b> plays Earth Right Now.</p>
+  </nav>
+</div>
+
+<div class="notes rv">
+  <section aria-labelledby="aboutH">
+    <h2 id="aboutH">About this selection</h2>
+    <p id="about"></p>
+    <div class="legend" id="legend" aria-hidden="true"></div>
+    <div class="legend-l" aria-hidden="true"><span id="legL"></span><span id="legR"></span></div>
+    <p id="hear"></p>
+    <p class="srcline">Source: <a id="src" target="_blank" rel="noopener"></a></p>
+  </section>
+  <section aria-labelledby="howH">
+    <h2 id="howH">How sight becomes sound</h2>
+    <table class="map">
+      <tr><th>In the picture</th><th>In the music</th></tr>
+      <tr><td>Position, west to east</td><td>Time. The needle crosses the picture once every 2 bars</td></tr>
+      <tr><td>Data value, read from the color scale</td><td>Pitch, kept on a musical scale. The melody moves in small steps so it stays a tune</td></tr>
+      <tr><td>Kind of data (dust or sea salt, rain or snow)</td><td>Instrument. The sound key teaches each one</td></tr>
+      <tr><td>Brightness</td><td>Loudness and tone</td></tr>
+      <tr><td>Change between frames</td><td>Percussion. Sudden flashes become thunder</td></tr>
+      <tr><td>The whole frame</td><td>The chord and bass underneath</td></tr>
+      <tr><td>Left and right, top and bottom</td><td>Stereo position and register</td></tr>
+    </table>
+    <p style="margin-top:10px">Values are estimated from each picture’s published color scale, not from the raw science files.</p>
+  </section>
+  <section aria-labelledby="kbH">
+    <h2 id="kbH">Without a mouse</h2>
+    <ul class="kbd">
+      <li><kbd>Space</kbd> play or pause</li>
+      <li><kbd>A–C 1–9</kbd> dial a selection</li>
+      <li><kbd>N</kbd> <kbd>P</kbd> next, previous</li>
+      <li><kbd>T</kbd> guided tour</li>
+      <li><kbd>E</kbd> explore by touch</li>
+      <li><kbd>← ↑ → ↓</kbd> move the listening point</li>
+      <li><kbd>D</kbd> describe what is playing</li>
+      <li><kbd>1–4</kbd> hear each sound in the key</li>
+      <li><kbd>R</kbd> record the music</li>
+    </ul>
+  </section>
+</div>
+
+<footer>
+  Pictures: NASA Scientific Visualization Studio and Earth Information Center, and NASA Global Imagery Browse Services (GIBS), part of NASA’s Earth Science Data and Information System (ESDIS). GOES-East is operated by NOAA. Sound is made in your browser from those pictures. Made for the 2026 NASA Space Apps Challenge, “The Earth Information Jukebox”. Code written with AI assistance.
+</footer>
+<div class="sr" aria-live="assertive" id="srA"></div>
+
+<script>
+"use strict";
+// ---------- Reading data values from color scales ----------
+const RAINBOW = (r,g,b,h,s,l)=> s<0.15 ? l : Math.max(0,Math.min(1,(240-((h>300)?0:Math.min(h,240)))/240));
+const BRIGHT  = (r,g,b,h,s,l)=> l;
+const clamp=v=>Math.max(0,Math.min(1,v));
+const three=(lo,mid,hi,a=.35,b=.65)=>c=> c.l<.06&&c.s<.2?null : c.v<a?lo : c.v<b?mid : hi;
+const WORLD=[-90,-180,90,180];
+const gibs=(layer,time,bbox=WORLD,w=1024,h=512)=>`https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=${layer}&CRS=EPSG:4326&BBOX=${bbox.join(",")}&WIDTH=${w}&HEIGHT=${h}&FORMAT=image/png&TIME=${time}`;
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+const TRACKS = [
+ {id:"ocean", group:"eic", title:"Sea Surface Currents & Temperature", short:"ECCO2 ocean model", src:"media/ocean.webm", type:"video",
+  svs:"https://svs.gsfc.nasa.gov/3912/", srcName:"NASA SVS 3912",
+  about:"Ocean surface currents from the ECCO2 model, colored by sea surface temperature. Warm tropical water glows red and yellow. Cold polar water is blue.",
+  legend:"linear-gradient(90deg,#1b2a8f,#2fa3e0,#6fe06f,#ffe14d,#ff5a2a)", L:"cold water", R:"warm water",
+  hear:"Cold water chimes as low bells, temperate water is plucked, and warm currents sing as high horns. The Gulf Stream and Kuroshio come through as bright melodies.",
+  value:RAINBOW, classify:three({f:"bell",label:"cold water"},{f:"pluck",label:"temperate water"},{f:"brass",label:"warm water"}),
+  keys:[{f:"bell",label:"cold water",c:"#2f6fe0"},{f:"pluck",label:"temperate water",c:"#6fe06f"},{f:"brass",label:"warm water",c:"#ff5a2a"}],
+  scale:"dorian", root:50, mood:"flowing", bpm:84},
+ {id:"co2", group:"eic", title:"DYAMOND Global Carbon Dioxide", short:"GEOS CO₂ simulation, Jan–Mar 2020", src:"media/co2.mp4", type:"video",
+  svs:"https://svs.gsfc.nasa.gov/5196/", srcName:"NASA SVS 5196",
+  about:"Carbon dioxide moving through the atmosphere in a very high resolution NASA GEOS simulation of January to March 2020. Brighter, warmer colors mean more CO₂.",
+  legend:"linear-gradient(90deg,#0b0b2a,#5a2a8a,#d1495b,#ffb347,#fff6c2)", L:"lower CO₂", R:"higher CO₂",
+  hear:"More CO₂ means higher, denser and more dissonant notes. Plumes build up as rising horns and growls. Cleaner air stays quiet and low.",
+  value:(r,g,b,h,s,l)=>clamp(l*0.8+((h<60||h>300)?0.3*s:0)), classify:three({f:"bell",label:"lower CO₂"},{f:"brass",label:"elevated CO₂"},{f:"growl",label:"highest CO₂"},.3,.55),
+  keys:[{f:"bell",label:"lower CO₂",c:"#5a2a8a"},{f:"brass",label:"elevated CO₂",c:"#d1495b"},{f:"growl",label:"highest CO₂",c:"#ffd27a"}],
+  scale:"phrygian", root:45, mood:"tense", bpm:70},
+ {id:"aerosols", group:"eic", title:"GEOS Aerosols: 19 Aug 2025", short:"Dust, smoke, sulfate, sea salt", src:"media/aerosols.png", type:"image", flat:true,
+  svs:"https://svs.gsfc.nasa.gov/5669/", srcName:"NASA SVS 5669",
+  about:"A snapshot of particles in the atmosphere from NASA's GEOS model. Saharan dust is the purple band over the Atlantic. Smoke from fires is red and orange over central Africa. Sulfate pollution is green. Sea salt makes the blue-white swirls over the stormy Southern Ocean.",
+  legend:"linear-gradient(90deg,#c58be0 0 25%,#ff6a3d 25% 50%,#39e65a 50% 75%,#9fc3d6 75%)", L:"dust · smoke", R:"sulfate · sea salt",
+  hear:"Each particle type is its own section of the band. Listen for the dust plume blowing west from Africa toward the Caribbean.",
+  value:BRIGHT, classify:(c)=>{ if(c.l<.12) return null;
+     if(c.h>255&&c.h<335&&c.s>.15) return {f:"brass",label:"dust"};
+     if((c.h<45||c.h>335)&&c.s>.3) return {f:"growl",label:"smoke from fires"};
+     if(c.h>=75&&c.h<165&&c.s>.3) return {f:"pluck",label:"sulfate pollution"};
+     if(c.h>=165&&c.h<=255 || c.s<.2 && c.l>.35) return {f:"bell",label:"sea salt"};
+     return null},
+  keys:[{f:"brass",label:"dust",c:"#c58be0"},{f:"growl",label:"smoke from fires",c:"#ff6a3d"},{f:"pluck",label:"sulfate pollution",c:"#39e65a"},{f:"bell",label:"sea salt",c:"#9fc3d6"}],
+  scale:"majPent", root:50, mood:"airy", bpm:84},
+ {id:"lightning", group:"eic", title:"Lightning Seen from the ISS", short:"LIS flash detections, 2017–2023", src:"media/lightning.mp4", type:"video",
+  svs:"https://svs.gsfc.nasa.gov/5011/", srcName:"NASA SVS 5011",
+  about:"Lightning flashes detected by the Lightning Imaging Sensor on the International Space Station between 2017 and 2023 (a 50-second excerpt).",
+  legend:"linear-gradient(90deg,#000,#29395c,#8fd3ff,#fff)", L:"no flashes", R:"intense flashes",
+  hear:"Every flash is a sparkle and a thunder hit. On phones it is also a vibration. The quiet night side of Earth hums as soft bells.",
+  value:BRIGHT, classify:(c)=> c.l<.07?null: c.l>.4?{f:"spark",label:"lightning flash"}:{f:"bell",label:"quiet night side of Earth"},
+  keys:[{f:"spark",label:"lightning flash",c:"#fff"},{f:"thunder",label:"burst of flashes",c:"#8fd3ff"},{f:"bell",label:"quiet night side of Earth",c:"#29395c"}],
+  scale:"minPent", root:43, mood:"storm", bpm:96},
+ {id:"forest", group:"eic", title:"GEDI Forest Height", short:"Lidar canopy height, 2019–2020", src:"media/forest.mp4", type:"video",
+  svs:"https://svs.gsfc.nasa.gov/4950/", srcName:"NASA SVS 4950",
+  about:"Global forest canopy height measured by NASA's GEDI lidar on the International Space Station (April 2019 to April 2020). Brown and dark green are shorter vegetation. Bright green and white are the tallest forests.",
+  legend:"linear-gradient(90deg,#6b4a2a,#1f5a2a,#3fae4a,#b8f08a,#fff)", L:"short vegetation", R:"tall forest",
+  hear:"Taller forest plays deeper, longer plucked notes, like bigger trees. Short vegetation is higher and lighter.",
+  value:(r,g,b,h,s,l)=> ((h>15&&h<170&&s>0.15)||(s<.15&&l>.8)) ? l : 0, invertPitch:true,
+  classify:(c)=> c.v<.08?null:{f:"pluck",label:c.v>.6?"tall forest":c.v>.3?"medium forest":"short vegetation"},
+  keys:[{f:"pluck",label:"short vegetation",c:"#1f5a2a",deg:9},{f:"pluck",label:"tall forest",c:"#b8f08a",deg:1}],
+  scale:"lydian", root:48, mood:"organic", bpm:72},
+ {id:"night", group:"eic", title:"Night Lights Change, 2012–2023", short:"VIIRS Black Marble", src:"media/nightlights.jpg", type:"image",
+  svs:"https://svs.gsfc.nasa.gov/5313/", srcName:"NASA SVS 5313",
+  about:"How human lighting changed between 2012 and 2023, from the VIIRS instrument. Purple means more light, orange means less light. The close-ups show India brightening, Western Europe dimming, and Ukraine going dark.",
+  legend:"linear-gradient(90deg,#ff9a3d,#3a3a3a,#9b7bff)", L:"lights dimmed", R:"lights grew",
+  hear:"Growing light plays as high, bright bells. Dimming light plays as low horns. Dark oceans and wilderness are silence, so you can hear the gaps.",
+  value:(r,g,b,h,s,l)=> (h>225&&h<300&&s>.15)? .55+l*.45 : ((h>15&&h<50&&s>.3)? .45-l*.45 : l*.5),
+  classify:(c)=>{ if(c.l<.1) return null;
+     if(c.h>225&&c.h<300&&c.s>.15) return {f:"bell",label:"more light than 2012"};
+     if(c.h>15&&c.h<50&&c.s>.3) return {f:"brass",label:"less light than 2012"};
+     if(c.s<.15&&c.l>.55) return {f:"spark",label:"bright, little change"};
+     return null},
+  keys:[{f:"bell",label:"more light than 2012",c:"#9b7bff",deg:8},{f:"brass",label:"less light than 2012",c:"#ff9a3d",deg:1},{f:"spark",label:"bright, little change",c:"#eee"}],
+  scale:"majPent", root:57, mood:"sparkle", bpm:92},
+
+ // ---- Live NASA GIBS layers: newest available image, auto-updating, or any date ----
+ {id:"now", group:"live", title:"Earth Right Now", short:"GOES-East, a new image every 10 minutes", type:"gibs", layer:"GOES-East_ABI_GeoColor", period:"tenmin", bbox:[-60,-135,60,-15], size:[768,768], flat:true,
+  svs:"https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api", srcName:"NASA GIBS · GOES-East ABI GeoColor (satellite operated by NOAA)",
+  about:"The Americas as seen from the GOES-East weather satellite, using the newest image NASA has published. By day it is true color: white clouds, blue ocean, green and brown land. By night, clouds are shown in infrared over city lights.",
+  legend:"linear-gradient(90deg,#0b2a5e,#2f7f3f,#b9a27a,#ffffff)", L:"ocean · land", R:"cloud",
+  hear:"Clouds are breathy air, the ocean rings as bells, land is plucked strings, and city lights at night sparkle. This page asks NASA for a newer image every five minutes and updates the picture and the music by itself.",
+  value:BRIGHT, classify:(c)=> c.l<.06?null : (c.s<.25&&c.l>.5)?{f:"air",label:"cloud"} : (c.h>25&&c.h<65&&c.s>.5&&c.l>.45)?{f:"spark",label:"city lights at night"} : (c.h>170&&c.h<265)?{f:"bell",label:"ocean"} : {f:"pluck",label:"land"},
+  keys:[{f:"air",label:"cloud",c:"#fff"},{f:"bell",label:"ocean",c:"#1f4f9e"},{f:"pluck",label:"land",c:"#5f8f4f"},{f:"spark",label:"city lights at night",c:"#ffd35a"}],
+  scale:"majPent", root:50, mood:"airy", bpm:80},
+ {id:"sst", group:"live", title:"Sea Surface Temperature", short:"GHRSST MUR, newest or any day", type:"gibs", layer:"GHRSST_L4_MUR_Sea_Surface_Temperature", period:"day", flat:true,
+  svs:"https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api", srcName:"NASA GIBS · GHRSST L4 MUR Sea Surface Temperature",
+  about:"The temperature of the ocean surface, starting on the newest day NASA has published, blended from many satellites (GHRSST MUR). Purple and blue are cold polar water. Orange and dark red are the warmest tropical seas. Land has no data and is silent.",
+  legend:"linear-gradient(90deg,#4b0a5e,#2456c8,#2ab0e0,#3fbf3f,#ffe100,#ff7a00,#8a0f0f)", L:"cold", R:"warm",
+  hear:"The planet's heat bands play from low bells at the poles to high horns at the equator. Change the date to hear the seasons shift.",
+  value:(r,g,b,h,s,l)=>{ if(s<.2) return 0; if(h>320||(h<25&&l<.35)) return 1; return clamp(1-Math.min(h,300)/300) },
+  classify:three({f:"bell",label:"cold polar water"},{f:"pluck",label:"temperate water"},{f:"brass",label:"warm tropical water"},.4,.82),
+  keys:[{f:"bell",label:"cold polar water",c:"#3b3fbf"},{f:"pluck",label:"temperate water",c:"#3fbf3f"},{f:"brass",label:"warm tropical water",c:"#ff5a00"}],
+  scale:"dorian", root:50, mood:"flowing", bpm:84},
+ {id:"rain", group:"live", title:"Rain and Snow", short:"GPM IMERG, newest or any day", type:"gibs", layer:"IMERG_Precipitation_Rate", period:"hour", flat:true,
+  svs:"https://gpm.nasa.gov/data/imerg", srcName:"NASA GIBS · GPM IMERG Precipitation Rate",
+  about:"Where it is raining and snowing, from the Global Precipitation Measurement mission (IMERG). It starts on the newest map NASA has published. Green is light rain, yellow and red are heavy rain, and blue is snow. Pick 19 August 2025 to find Hurricane Erin spinning east of Florida.",
+  legend:"linear-gradient(90deg,#9fd8ef,#1e8f2e,#b8e000,#ffb000,#e0281e)", L:"snow · light rain", R:"heavy rain",
+  hear:"Light rain is plucked droplets. Heavy rain swells into horns, and the most intense storms growl. Snow rings as soft bells. Dry skies are silent.",
+  value:(r,g,b,h,s,l)=>{ if(s<.15) return 0; if(h>150&&h<270) return .12; if(h>330) return 1; return clamp((135-h)/135) },
+  classify:(c)=>{ if(c.s<.15||c.l<.05) return null; if(c.h>150&&c.h<270) return {f:"bell",label:"snow"};
+     return c.v<.45?{f:"pluck",label:"light rain"}:c.v<.8?{f:"brass",label:"heavy rain"}:{f:"growl",label:"intense rain"} },
+  keys:[{f:"bell",label:"snow",c:"#9fd8ef"},{f:"pluck",label:"light rain",c:"#1e8f2e"},{f:"brass",label:"heavy rain",c:"#ffb000"},{f:"growl",label:"intense rain",c:"#e0281e"}],
+  scale:"minPent", root:48, mood:"storm", bpm:90},
+ {id:"airtemp", group:"live", title:"A Year of Air Temperature", short:"MERRA-2 monthly, play a whole year", type:"gibs", layer:"MERRA2_2m_Air_Temperature_Monthly", period:"month", flat:true,
+  svs:"https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/", srcName:"NASA GIBS · MERRA-2 2-meter Air Temperature (Monthly)",
+  about:"The average air temperature near the ground for each month, from NASA's MERRA-2 reanalysis. Purple, blue and teal are freezing. Yellow is cool to mild. Orange is warm. Red and dark crimson are the hottest places on Earth.",
+  legend:"linear-gradient(90deg,#5e4fa2,#66c2a5,#ffffbf,#fdae61,#d53e4f,#9e0142)", L:"freezing", R:"hottest",
+  hear:"Press “Play a whole year” to hear the seasons breathe: the warm band of horns swings north in July and south in January, while the poles ring cold bells.",
+  value:(r,g,b,h,s,l)=>{ const hh=h>300?h-360:h; return clamp((251-hh)/276) },
+  classify:(c)=> c.l<.05?null : c.v<.4?{f:"bell",label:"freezing air"} : c.v<.76?{f:"pluck",label:"cool to mild air"} : c.v<.9?{f:"brass",label:"warm air"} : {f:"growl",label:"hottest air"},
+  keys:[{f:"bell",label:"freezing air",c:"#5e4fa2"},{f:"pluck",label:"cool to mild air",c:"#e6f598"},{f:"brass",label:"warm air",c:"#fdae61"},{f:"growl",label:"hottest air",c:"#d53e4f"}],
+  scale:"lydian", root:48, mood:"flowing", bpm:88},
+];
+const GENERIC_KEYS=[{f:"brass",label:"red and orange areas",c:"#ff6a3d"},{f:"pluck",label:"green areas",c:"#39e65a"},{f:"bell",label:"blue areas",c:"#3b8fe0"},{f:"air",label:"white and grey areas",c:"#ddd"}];
+
+const SCALES = {majPent:[0,2,4,7,9], minPent:[0,3,5,7,10], dorian:[0,2,3,5,7,9,10], phrygian:[0,1,3,5,7,8,10], lydian:[0,2,4,6,7,9,11]};
+const INST={brass:"horns",bell:"bells",pluck:"plucked strings",spark:"sparkles",air:"breathy air",growl:"low growls",thunder:"thunder"};
+const COLS=32, ROWS=12, SUB=4;
+
+// ---------- DOM ----------
+const $=id=>document.getElementById(id);
+const vid=$("vid"), img=$("img"), ov=$("overlay"), octx=ov.getContext("2d"), spec=$("spec"), sx=spec.getContext("2d");
+const samp=document.createElement("canvas"); samp.width=COLS*SUB; samp.height=ROWS*SUB;
+const sctx=samp.getContext("2d",{willReadFrequently:true});
+
+let cur=0, playing=false, explore=false, tour=false, grid=null, prevGrid=null, stats={b:0,w:0,m:0,n:0};
+let step=0, nextTime=0, timer=null, flashes=[], cursor={x:.5,y:.5}, lastProbe=0;
+let dayVal="2025-08-19", monVal="2024-07", yearOn=false, yearFrames=[], yearIdx=0;
+let latestOn=true, liveTime="", liveMs=0, liveReq=0;
+
+function rgb2hsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,s=0;const l=(mx+mn)/2;
+  if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);h=mx===r?((g-b)/d+(g<b?6:0)):mx===g?((b-r)/d+2):((r-g)/d+4);h*=60}return[h,s,l]}
+function family(h,s,l){ if(s<0.18) return l>0.55?"air":"none"; if(h<50||h>320) return "brass"; if(h<75) return "spark"; if(h<170) return "pluck"; return "bell"; }
+function classifyCell(T,c){ if(c.a<.3) return null; if(T.classify) return T.classify(c);
+  return c.f==="none"?null:{f:c.f,label:{horns:"red and orange",bell:"blue",pluck:"green",spark:"yellow",air:"white and grey"}[c.f]} }
+
+function readGrid(src,t){
+  const sw=src.videoWidth||src.naturalWidth, sh=src.videoHeight||src.naturalHeight; if(!sw) return null;
+  const W=COLS*SUB; let d;
+  try{ sctx.clearRect(0,0,W,ROWS*SUB); sctx.drawImage(src,0,0,sw,sh,0,0,W,ROWS*SUB); d=sctx.getImageData(0,0,W,ROWS*SUB).data }catch(e){ return null }
+  const g=[];
+  for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++){
+    // keep the most striking pixel in each cell so small features (city lights, flashes) survive
+    let best=-1,i=0; for(let yy=0;yy<SUB;yy++)for(let xx=0;xx<SUB;xx++){const j=((y*SUB+yy)*W+x*SUB+xx)*4;
+      const mx=Math.max(d[j],d[j+1],d[j+2]),mn=Math.min(d[j],d[j+1],d[j+2]),sal=(mx+(mx-mn)*.8)*d[j+3]/255; if(sal>best){best=sal;i=j}}
+    const a=d[i+3]/255, r=d[i],gg=d[i+1],b=d[i+2]; let [h,s,l]=rgb2hsl(r,gg,b); if(a<.3){s=0;l=0}
+    const v=a<.3?0:clamp(t.value?t.value(r,gg,b,h,s,l):l);
+    g.push({r,g:gg,b,a,h,s,l,v,f:family(h,s,l)});
+  }
+  return g;
+}
+function sample(){
+  const t=TRACKS[cur], src=t.type==="video"?vid:img;
+  if(t.type==="video" && vid.readyState<2) return;
+  if(t.type!=="video" && !(img.complete&&img.naturalWidth)) return;
+  const g=readGrid(src,t); if(!g) return;
+  const N=COLS*ROWS; let sb=0,sw2=0,sm=0;
+  for(let k=0;k<N;k++){ sb+=g[k].l; sw2+=g[k].v; if(prevGrid){ const p=prevGrid[k]; sm+=Math.abs(p.l-g[k].l)+Math.abs(p.v-g[k].v); if(g[k].l-p.l>0.18) flashes.push({k,t:performance.now()}) } }
+  stats.m=prevGrid?Math.min(1,sm/N*8):0; prevGrid=grid=g; stats.b=sb/N; stats.w=sw2/N;
+}
+
+// ---------- Audio ----------
+let ac=null, tone, leadIdx=null, master, comp, verb, verbSend, recDest, analyser, fft, recorder=null, chunks=[];
+const volNow=()=>+$("vol").value/100*0.9;
+function initAudio(){
+  if(ac) return;
+  ac=new (window.AudioContext||window.webkitAudioContext)();
+  master=ac.createGain(); master.gain.value=volNow();
+  comp=ac.createDynamicsCompressor(); comp.threshold.value=-18; comp.ratio.value=4;
+  verb=ac.createConvolver(); verb.buffer=impulse(2.8);
+  verbSend=ac.createGain(); verbSend.gain.value=0.5;
+  tone=ac.createBiquadFilter(); tone.type="lowpass"; tone.frequency.value=6500; tone.Q.value=.3;
+  analyser=ac.createAnalyser(); analyser.fftSize=256; analyser.smoothingTimeConstant=.8; fft=new Uint8Array(analyser.frequencyBinCount);
+  verbSend.connect(verb); verb.connect(master); master.connect(tone); tone.connect(comp); comp.connect(analyser); analyser.connect(ac.destination);
+  recDest=ac.createMediaStreamDestination(); comp.connect(recDest);
+}
+function impulse(sec){const len=ac.sampleRate*sec,b=ac.createBuffer(2,len,ac.sampleRate);
+  for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.4)}return b}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function out(pan,wet){const p=ac.createStereoPanner();p.pan.value=pan;p.connect(master);if(wet){const s=ac.createGain();s.gain.value=wet;p.connect(s);s.connect(verbSend)}return p}
+
+function voice(kind,midi,t,vel,pan,bright){
+  if(kind==="thunder") return thunder(t,vel*1.6,pan);
+  const f=mtof(midi), dst=out(pan, kind==="bell"?0.9:0.7), g=ac.createGain(); g.connect(dst);
+  const lp=ac.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=500+bright*3200; lp.connect(g);
+  const v=Math.min(0.5,vel), osc=(type,fr,gain,stop)=>{const o=ac.createOscillator();o.type=type;o.frequency.value=fr;const og=ac.createGain();og.gain.value=gain;o.connect(og);og.connect(lp);o.start(t);o.stop(t+stop);return o};
+  if(kind==="bell"){            // soft chime
+    osc("sine",f,1,2.4); osc("sine",f*2.76,.28,1.2); osc("sine",f*5.4,.06,.5);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*.5,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+2.2);
+  }else if(kind==="pluck"){     // harp-like pluck
+    osc("triangle",f,1,1.5); osc("sine",f*2,.2,.6);
+    lp.frequency.setValueAtTime(600+bright*3500,t);lp.frequency.exponentialRampToValueAtTime(350,t+.6);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*.62,t+.006);g.gain.exponentialRampToValueAtTime(.0001,t+1.3);
+  }else if(kind==="brass"){     // warm horn
+    osc("triangle",f,1,1.4).detune.value=-4; osc("triangle",f,1,1.4).detune.value=4; osc("sine",f/2,.5,1.4); osc("sawtooth",f,.12,1.4);
+    lp.frequency.setValueAtTime(350,t);lp.frequency.linearRampToValueAtTime(700+bright*1100,t+.12);lp.frequency.linearRampToValueAtTime(450,t+1);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*.42,t+.09);g.gain.setTargetAtTime(0,t+.5,.3);
+  }else if(kind==="spark"){     // glassy sparkle
+    osc("sine",f*2,1,.5); osc("sine",f*3,.3,.3);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*.3,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+.45);
+  }else if(kind==="growl"){     // low, dark swell
+    osc("triangle",f/2,1,1.3); osc("sine",f/4,.7,1.3); osc("sawtooth",f/2,.15,1.3);
+    lp.frequency.value=320; const trem=ac.createOscillator(),tg=ac.createGain();trem.frequency.value=5;tg.gain.value=v*.12;trem.connect(tg);tg.connect(g.gain);trem.start(t);trem.stop(t+1.3);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*.5,t+.12);g.gain.setTargetAtTime(0,t+.55,.28);
+  }else if(kind==="air"){       // breath
+    const n=noiseSrc();const bp=ac.createBiquadFilter();bp.type="bandpass";bp.frequency.value=f*2;bp.Q.value=14;n.connect(bp);bp.connect(g);n.start(t);n.stop(t+1.2);
+    osc("sine",f,.25,1.1);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*.9,t+.2);g.gain.setTargetAtTime(0,t+.45,.25);
+  }
+}
+let noiseBuf=null;
+function noiseSrc(){if(!noiseBuf){noiseBuf=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+  const s=ac.createBufferSource();s.buffer=noiseBuf;s.loop=true;return s}
+function hat(t,vel){const n=noiseSrc(),hp=ac.createBiquadFilter(),g=ac.createGain();hp.type="bandpass";hp.frequency.value=6000;hp.Q.value=1.2;n.connect(hp);hp.connect(g);g.connect(out((Math.random()-.5)*.6,.2));
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*.06,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+.09);n.start(t);n.stop(t+.1)}
+function thunder(t,vel,pan){const n=noiseSrc(),lp=ac.createBiquadFilter(),g=ac.createGain();lp.type="lowpass";lp.frequency.setValueAtTime(900,t);lp.frequency.exponentialRampToValueAtTime(90,t+1);
+  n.connect(lp);lp.connect(g);g.connect(out(pan,.9));g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*.5,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+1.4);n.start(t);n.stop(t+1.5);
+  const o=ac.createOscillator(),og=ac.createGain();o.type="sine";o.frequency.setValueAtTime(90,t);o.frequency.exponentialRampToValueAtTime(38,t+.4);o.connect(og);og.connect(out(pan,0));
+  og.gain.setValueAtTime(vel*.5,t);og.gain.exponentialRampToValueAtTime(.0001,t+.5);o.start(t);o.stop(t+.55)}
+function bass(midi,t,vel){const o=ac.createOscillator(),o2=ac.createOscillator(),g=ac.createGain(),lp=ac.createBiquadFilter();o.type="triangle";o2.type="sine";o.frequency.value=o2.frequency.value=mtof(midi);lp.frequency.value=320;
+  o.connect(lp);o2.connect(lp);lp.connect(g);g.connect(out(0,.05));g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*.34,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+1.8);o.start(t);o2.start(t);o.stop(t+1.9);o2.stop(t+1.9)}
+function pad(chord,t,dur,vel,bright){
+  chord.forEach((m,i)=>{[-5,5].forEach(dt=>{const o=ac.createOscillator(),g=ac.createGain(),lp=ac.createBiquadFilter();o.type="triangle";o.frequency.value=mtof(m);o.detune.value=dt;
+    lp.frequency.value=700+bright*900;o.connect(lp);lp.connect(g);g.connect(out(i%2?.35:-.35,1));
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*.055,t+dur*.4);g.gain.linearRampToValueAtTime(0,t+dur*1.08);o.start(t);o.stop(t+dur*1.1)})});
+}
+function degree(t,idx){const sc=SCALES[t.scale];const o=Math.floor(idx/sc.length);return t.root+12*o+sc[((idx%sc.length)+sc.length)%sc.length]}
+const spb=()=>60/+$("tempo").value/4;
+
+// ---------- Scheduler ----------
+function tick(){ if(!playing) return;
+  while(nextTime<ac.currentTime+0.12){ scheduleStep(step,nextTime); nextTime+=spb(); step++; } }
+function scheduleStep(s,t){
+  const T=TRACKS[cur];
+  if(yearOn && T.period==="month" && s>0 && s%COLS===0) nextMonth();
+  sample(); if(!grid) return;
+  const col=s%COLS, sc=SCALES[T.scale];
+  if(s%16===0){
+    const deg=Math.round(stats.w*4)%sc.length; const root=T.root-12+sc[deg];
+    const third=T.root+sc[(deg+2)%sc.length], fifth=T.root+sc[(deg+4)%sc.length]+(deg+4>=sc.length?12:0);
+    const chord=[root+12,third,fifth]; if(T.mood==="tense"&&stats.w>.45) chord.push(root+13);
+    pad(chord,t,spb()*16,0.6+stats.b,stats.b); bass(root,t,0.4+(1-stats.b)*.5);
+  }
+  if(s%4===2 && T.mood!=="sparkle") bass(T.root-12+sc[Math.round(stats.w*4)%sc.length],t,.15);
+  const cells=[]; for(let y=0;y<ROWS;y++){const c=grid[y*COLS+col]; const cl=classifyCell(T,c); if(!cl) continue;
+    const sal=Math.max(c.v,.3)*(0.4+Math.max(c.l,c.s*.6)); if(sal>0.12) cells.push({y,c,cl,sal})}
+  cells.sort((a,b)=>b.sal-a.sal);
+  const busy=stats.m>.3||T.id==="lightning"; let n=0;
+  const play=(x,lead,accent)=>{ const {y,c,cl,sal}=x, val=T.invertPitch?1-c.v:c.v;
+    let idx=Math.round(val*(sc.length*2)) + Math.round((ROWS-1-y)/ROWS*sc.length*0.5);
+    // the lead voice moves at most three scale steps at a time, so the data reads as a melody rather than as jumps
+    if(lead){ if(leadIdx==null) leadIdx=idx; else leadIdx+=Math.max(-3,Math.min(3,idx-leadIdx)); idx=leadIdx }
+    voice(cl.f, degree(T,idx)+(cl.f==="spark"?12:0), t, (0.16+sal*0.5)*(accent?1.25:1), (col/(COLS-1))*1.6-.8, c.s*0.6+c.l*0.4);
+    n++; lit.push({x:col,y,at:t}) };
+  if(cells.length && (s%2===0||busy)) play(cells[0],true,s%8===0);          // melody on eighth notes
+  if(s%4===0){ const second=cells.find(x=>x.cl.f!==cells[0].cl.f)||cells[1]; if(second) play(second,false,false) }   // a second instrument on the beat
+  if(T.mood==="sparkle"&&s%4===2&&cells[2]) play(cells[2],false,false);
+  if(n>0||s%4===3) stats.n=n;
+  if(s%2===0 && Math.random()<.12+stats.m*1.2) hat(t,.25+stats.m*.5);
+  const now=performance.now(); flashes=flashes.filter(f=>now-f.t<200);
+  if(T.type==="video" && (T.id==="lightning" ? flashes.length>0 : flashes.length>6)){
+    const f=flashes[Math.floor(Math.random()*flashes.length)];
+    thunder(t, Math.min(1,.4+flashes.length/20), ((f.k%COLS)/(COLS-1))*1.6-.8);
+    if(navigator.vibrate && navigator.userActivation && navigator.userActivation.hasBeenActive) try{navigator.vibrate(40)}catch(e){}
+    flashes=[];
+  }
+  if(tour && s===COLS*2){ setTimeout(tourNext,0); return }
+  if(!tour && !yearOn && s%64===0 && s>0) narrate(false);
+}
+const lit=[];
+
+// ---------- Drawing ----------
+function contentBox(W,H){const t=TRACKS[cur], s=t.type==="video"?vid:img; const sw=s.videoWidth||s.naturalWidth||16, sh=s.videoHeight||s.naturalHeight||9;
+  const k=Math.min(W/sw,H/sh); const w=sw*k,h=sh*k; return {x:(W-w)/2,y:(H-h)/2,w,h}}
+const pct=v=>Math.round(v*100)+"%";
+function draw(){
+  const r=ov.getBoundingClientRect(); const dpr=devicePixelRatio||1;
+  if(ov.width!==Math.round(r.width*dpr)||ov.height!==Math.round(r.height*dpr)){ov.width=Math.round(r.width*dpr);ov.height=Math.round(r.height*dpr)}
+  octx.setTransform(dpr,0,0,dpr,0,0); octx.clearRect(0,0,r.width,r.height);
+  const box=contentBox(r.width,r.height), cw=box.w/COLS, ch=box.h/ROWS;
+  if(ac && playing && !explore){
+    const col=((step-1)%COLS+COLS)%COLS, x=box.x+(col+.5)*cw;
+    const grd=octx.createLinearGradient(x-40,0,x+4,0);grd.addColorStop(0,"rgba(255,244,214,0)");grd.addColorStop(1,"rgba(255,244,214,.3)");
+    octx.fillStyle=grd;octx.fillRect(x-40,box.y,44,box.h);
+    octx.strokeStyle="#ff5a36";octx.lineWidth=3;octx.beginPath();octx.moveTo(x+4,box.y);octx.lineTo(x+4,box.y+box.h);octx.stroke();
+  }
+  if(ac){const now=ac.currentTime;
+    for(let i=lit.length-1;i>=0;i--){const L=lit[i],age=now-L.at; if(age>1.2){lit.splice(i,1);continue} if(age<0) continue;
+      const a=1-age/1.2; octx.strokeStyle=`rgba(255,201,60,${a})`;octx.lineWidth=2.5;
+      octx.beginPath();octx.arc(box.x+(L.x+.5)*cw,box.y+(L.y+.5)*ch,4+age*18,0,6.283);octx.stroke()}}
+  if(explore){const x=box.x+cursor.x*box.w,y=box.y+cursor.y*box.h;octx.strokeStyle="#ffe066";octx.lineWidth=2;
+    octx.beginPath();octx.arc(x,y,14,0,6.283);octx.moveTo(x-22,y);octx.lineTo(x+22,y);octx.moveTo(x,y-22);octx.lineTo(x,y+22);octx.stroke()}
+  // spectrum: proof that the sound is live
+  const sr=spec.getBoundingClientRect(); if(spec.width!==Math.round(sr.width*dpr)){spec.width=Math.round(sr.width*dpr);spec.height=Math.round(sr.height*dpr)}
+  sx.setTransform(dpr,0,0,dpr,0,0); sx.clearRect(0,0,sr.width,sr.height);
+  if(analyser){analyser.getByteFrequencyData(fft); const nb=72,bw=sr.width/nb;
+    for(let i=0;i<nb;i++){const v=fft[Math.floor(Math.pow(i/nb,1.6)*fft.length*.8)]/255; const h=v*sr.height;
+      sx.fillStyle=v>.62?"#ff5a36":"#efe6d3"; sx.fillRect(i*bw+1,sr.height-h,bw-2,h)}}
+  $("mB").style.width=(stats.b*100)+"%"; $("mW").style.width=(stats.w*100)+"%"; $("mM").style.width=(stats.m*100)+"%"; $("mN").style.width=Math.min(100,stats.n/2*100)+"%";
+  $("vB").textContent=pct(stats.b); $("vW").textContent=pct(stats.w); $("vM").textContent=pct(stats.m); $("vN").textContent=stats.n+" voices";
+  requestAnimationFrame(draw);
+}
+
+// ---------- Explore mode ----------
+function describeCell(c,T){ const cl=classifyCell(T,c); if(!cl) return c.a<.3?"No data here":"Dark, nothing here";
+  return `${cl.label}, ${c.v>.66?"high":c.v>.33?"medium":"low"}`; }
+function probe(px,py,speak){
+  if(!grid) sample(); if(!grid) return;
+  const x=Math.min(COLS-1,Math.floor(px*COLS)), y=Math.min(ROWS-1,Math.floor(py*ROWS)), c=grid[y*COLS+x], T=TRACKS[cur];
+  initAudio(); const t=ac.currentTime+.01, val=T.invertPitch?1-c.v:c.v, cl=classifyCell(T,c);
+  if(cl) voice(cl.f, degree(T,Math.round(val*SCALES[T.scale].length*2)), t, .3+c.l*.4, px*1.6-.8, c.s);
+  else hat(t,.4);
+  lit.push({x,y,at:t});
+  if(speak){const bb=T.bbox||WORLD, lat=Math.round(bb[2]-py*(bb[2]-bb[0])), lon=Math.round(bb[1]+px*(bb[3]-bb[1]));
+    say(`${describeCell(c,T)}.`+(T.flat?` Near ${Math.abs(lat)}°${lat>=0?"N":"S"}, ${Math.abs(lon)}°${lon>=0?"E":"W"}.`:""),true)}
+}
+function pointerPos(e){const r=ov.getBoundingClientRect(),b=contentBox(r.width,r.height);
+  cursor.x=Math.max(0,Math.min(.999,(e.clientX-r.left-b.x)/b.w));cursor.y=Math.max(0,Math.min(.999,(e.clientY-r.top-b.y)/b.h))}
+// Touch: in scan mode a tap plays or pauses and a sideways swipe changes the selection.
+// In explore mode a finger drags a listening point; lifting it speaks what is there.
+let pdown=null;
+ov.addEventListener("pointerdown",e=>{ pdown={x:e.clientX,y:e.clientY,t:performance.now()}; try{ov.setPointerCapture(e.pointerId)}catch(_){}
+  if(explore){pointerPos(e);probe(cursor.x,cursor.y,false)} });
+ov.addEventListener("pointermove",e=>{ if(!explore||(!pdown&&e.pointerType!=="mouse")) return; pointerPos(e);
+  const now=performance.now(); if(now-lastProbe>110){lastProbe=now;probe(cursor.x,cursor.y,false)} });
+ov.addEventListener("pointerup",e=>{ if(!pdown) return; const dx=e.clientX-pdown.x, dy=e.clientY-pdown.y, quick=performance.now()-pdown.t<600; pdown=null;
+  if(explore){pointerPos(e);probe(cursor.x,cursor.y,true);return}
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){endTour();load(cur+(dx<0?1:-1),true)}
+  else if(quick&&Math.abs(dx)<10&&Math.abs(dy)<10) setPlay(!playing) });
+ov.addEventListener("pointercancel",()=>{pdown=null});
+// a short tick under the finger on every key press, where the device supports it
+document.addEventListener("click",e=>{ if(e.target.closest("button,.drop")&&navigator.vibrate&&navigator.userActivation&&navigator.userActivation.hasBeenActive) try{navigator.vibrate(8)}catch(_){} });
+
+// ---------- Speech ----------
+const VOICE_ORDER=["Samantha","Ava","Allison","Zoe","Karen","Serena","Daniel","Moira","Tessa","Microsoft Aria","Microsoft Jenny","Microsoft Sonia","Microsoft Libby","Google UK English Female","Google US English","Google UK English Male"];
+const NOVELTY=/Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Fred|Good News|Jester|Junior|Organ|Ralph|Superstar|Trinoids|Whisper|Wobble|Zarvox|Grandma|Grandpa|Rocko|Eddy|Flo|Reed|Sandy|Shelley|Kathy/;
+let voices=[], voicePick=null;
+function loadVoices(){ if(!("speechSynthesis" in window)) return;
+  const all=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().startsWith("en")&&!NOVELTY.test(v.name)); if(!all.length) return;
+  const rank=v=>{ let r=VOICE_ORDER.findIndex(n=>v.name.startsWith(n)); if(r<0) r=50; if(/Natural|Premium|Enhanced|Neural/i.test(v.name)) r-=30; return r };
+  voices=all.sort((a,b)=>rank(a)-rank(b)); let saved=""; try{saved=localStorage.getItem("ej-voice")||""}catch(e){}
+  voicePick=voices.find(v=>v.name===saved)||voices[0];
+  $("voiceSel").innerHTML=voices.map(v=>`<option${v===voicePick?" selected":""}>${v.name}</option>`).join(""); $("voiceCtl").hidden=false }
+if("speechSynthesis" in window){ loadVoices(); speechSynthesis.addEventListener("voiceschanged",loadVoices) }
+// say(html, urgent, spoken): the caption shows the full text; `spoken` is a shorter line for the voice ("" = show only)
+function say(text,urgent,spoken){
+  $("caption").innerHTML=text; const plain=(spoken===undefined?text:spoken).replace(/<[^>]+>/g,"");
+  if(!plain) return;
+  if($("narrate").checked && "speechSynthesis" in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(plain);
+    if(voicePick){u.voice=voicePick;u.lang=voicePick.lang} u.rate=.96; u.pitch=1;
+    // the music dips under the voice so the words stay clear
+    u.onstart=()=>{if(master)master.gain.setTargetAtTime(volNow()*.3,ac.currentTime,.08)};
+    u.onend=u.onerror=()=>{if(master)master.gain.setTargetAtTime(volNow(),ac.currentTime,.3)};
+    speechSynthesis.speak(u)}
+  else if(urgent){$("srA").textContent=plain}
+}
+const firstSentence=t=>(t.match(/^.*?[.!?](\s|$)/)||[t])[0].trim();
+function narrate(forced){
+  if(!grid) return; const T=TRACKS[cur], counts={};
+  grid.forEach(c=>{const cl=classifyCell(T,c); if(cl){const k=INST[cl.f]+" for "+cl.label; counts[k]=(counts[k]||0)+1}});
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k])=>k);
+  const col=((step-1)%COLS+COLS)%COLS, where=["far west","west","centre","east","far east"][Math.min(4,Math.floor(col/COLS*5))];
+  const level=stats.w>.6?"high":stats.w>.35?"moderate":"low";
+  const txt=`<b>${T.title}</b>: the needle is over the ${where}. You hear ${top.join(" and ")||"near silence"}. Overall level is ${level}${stats.m>.25?", and the scene is changing quickly, so the rhythm picks up":""}.`;
+  say(txt,forced,forced?undefined:"");   // spoken only when asked for (the Describe key)
+}
+
+// ---------- Sound key (auditory legend) ----------
+function audition(k){ initAudio(); ac.resume(); const T=TRACKS[cur], t=ac.currentTime+.05, base=k.deg??({bell:3,pluck:6,horns:9,growl:11,spark:12,air:8,thunder:0}[k.f]);
+  [0,2,4].forEach((d,i)=>voice(k.f,degree(T,base+d),t+i*.28,.4,0,.6)); say(`${INST[k.f]}: ${k.label}`,true) }
+function renderKeys(){ const T=TRACKS[cur], ks=T.keys||GENERIC_KEYS;
+  $("keys").innerHTML=`<p class="eyebrow lbl">Sound key · press to hear each one</p>`+ks.map((k,i)=>`<button class="chip" data-k="${i}"><i style="background:${k.c}"></i><span class="kn">${i+1}</span><span>${k.label}<em>${INST[k.f]}</em></span></button>`).join("");
+  $("keys").querySelectorAll(".chip").forEach(b=>b.onclick=()=>audition(ks[+b.dataset.k])); }
+
+// ---------- Tracks ----------
+function codeOf(i){ const g=TRACKS[i].group; let n=0; for(let j=0;j<=i;j++) if(TRACKS[j].group===g) n++; return {eic:"A",live:"B",own:"C"}[g]+n }
+function renderList(){
+  const item=(t,i)=>`<div role="listitem"><button class="track ${t.group}-strip" data-i="${i}" aria-current="${i===cur}" aria-label="${codeOf(i)}. ${t.title}. ${t.short}"><span class="code">${codeOf(i)}</span><span class="tt"><b>${t.title}${t.group==="live"?' <em class="live">Live</em>':""}</b><small>${t.short}</small></span><span class="sw" style="background:${(t.legend||"#333").replace("90deg","180deg")}"></span></button></div>`;
+  for(const [el,gp] of [["tracksEIC","eic"],["tracksLive","live"],["tracksOwn","own"]])
+    $(el).innerHTML=TRACKS.map((t,i)=>t.group===gp?item(t,i):"").join("");
+  document.querySelectorAll(".track").forEach(b=>b.onclick=()=>{endTour();load(+b.dataset.i,true)});
+}
+function niceDate(T){ if(T.period==="month"){const [y,m]=monVal.split("-");return MONTHS[+m-1]+" "+y} const d=new Date(dayVal+"T00:00:00Z"); return d.getUTCDate()+" "+MONTHS[d.getUTCMonth()]+" "+d.getUTCFullYear() }
+function timeLabel(time){ const d=new Date(time.length>10?time:time+"T00:00:00Z"); const base=d.getUTCDate()+" "+MONTHS[d.getUTCMonth()]+" "+d.getUTCFullYear();
+  return time.length>10? base+", "+String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0")+" UTC" : base }
+// Ask NASA GIBS which recent time steps actually have data (tiny 64x32 probes), newest first.
+function probeTime(T,time){ return new Promise(res=>{ const im=new Image(); im.crossOrigin="anonymous";
+  im.onload=()=>{ try{ const c=document.createElement("canvas"); c.width=64;c.height=32; const x=c.getContext("2d"); x.drawImage(im,0,0,64,32); const d=x.getImageData(0,0,64,32).data; let n=0; for(let i=3;i<d.length;i+=4) if(d[i]>0) n++; res(n>40) }catch(e){res(false)} };
+  im.onerror=()=>res(false); im.src=gibs(T.layer,time,T.bbox||WORLD,64,32) }) }
+async function findLatest(T,afterMs){
+  const stepMs={tenmin:6e5,hour:36e5,day:864e5}[T.period], count={tenmin:40,hour:48,day:7}[T.period], now=Math.floor(Date.now()/stepMs)*stepMs, cand=[];
+  for(let k=T.period==="day"?0:1;k<=count;k++){ const ms=now-k*stepMs; if(ms<=afterMs) break; const iso=new Date(ms).toISOString(); cand.push({ms,time:T.period==="day"?iso.slice(0,10):iso.slice(0,16)+":00Z"}) }
+  const ok=await Promise.all(cand.map(c=>probeTime(T,c.time))); const i=ok.indexOf(true); return i<0?null:cand[i] }
+function showLive(T,time,latest){ liveTime=time; const [w,h]=T.size||[1024,512];
+  img.src=gibs(T.layer,time,T.bbox||WORLD,w,h); img.alt=`${T.title}, ${T.period==="month"?niceDate(T):timeLabel(time)}. ${T.about}`;
+  $("dateBadge").textContent= T.period==="month"? niceDate(T) : (latest?"Newest from NASA: ":"")+timeLabel(time)+(latest?" · updates itself":"");
+  $("latestBtn").setAttribute("aria-pressed",latest); prevGrid=null; }
+async function setLiveImage(){ const T=TRACKS[cur]; if(T.type!=="gibs") return; const my=++liveReq;
+  if(T.period==="month") return showLive(T,monVal+"-01",false);
+  if(latestOn){ $("dateBadge").textContent="Asking NASA for the newest image…"; liveTime=""; liveMs=0; img.removeAttribute("src"); grid=prevGrid=null; const r=await findLatest(T,0); if(my!==liveReq||TRACKS[cur]!==T) return;
+    if(r){ liveMs=r.ms; showLive(T,r.time,true); dayVal=r.time.slice(0,10); $("day").value=dayVal; return } }
+  showLive(T, T.period==="tenmin"? dayVal+"T15:00:00Z" : dayVal, false) }
+// The page updates itself: every 5 minutes, and whenever you come back to the tab, it checks NASA for something newer.
+async function refreshLive(){ const T=TRACKS[cur]; if(T.type!=="gibs"||!latestOn||T.period==="month"||yearOn||!liveMs) return; const my=liveReq;
+  const r=await findLatest(T,liveMs); if(r&&r.ms>liveMs&&my===liveReq&&TRACKS[cur]===T){ liveMs=r.ms; showLive(T,r.time,true); say(`New data just arrived from NASA: ${timeLabel(r.time)}.`,false) } }
+setInterval(refreshLive,5*60*1000); document.addEventListener("visibilitychange",()=>{ if(!document.hidden) refreshLive() });
+function load(i,announce){
+  cur=(i+TRACKS.length)%TRACKS.length; const t=TRACKS[cur]; grid=prevGrid=null; step=0; flashes=[]; leadIdx=null; setYear(false);
+  const live=t.type==="gibs"; $("liveBar").hidden=!live; $("dateBadge").hidden=!live;
+  $("coast").hidden=!live; if(live){ const [w,h]=t.size||[1024,512]; $("coast").src=gibs("Coastlines_15m","2020-01-01",t.bbox||WORLD,w,h) }
+  $("dayCtl").hidden=t.period==="month"; $("latestBtn").hidden=t.period==="month"; $("monCtl").hidden=t.period!=="month"; $("yearBtn").hidden=t.period!=="month";
+  if(t.type==="video"){img.hidden=true;vid.hidden=false;vid.src=t.src;vid.play().catch(()=>{});}
+  else{vid.pause();vid.removeAttribute("src");vid.load();vid.hidden=true;img.hidden=false; if(live) setLiveImage(); else {img.src=t.src;img.alt=t.about}}
+  $("about").textContent=t.about; $("hear").innerHTML="<b>What you'll hear:</b> "+t.hear; $("src").href=t.svs||"#"; $("src").textContent=t.srcName||"your file";
+  $("legend").style.background=t.legend||"#333"; $("legL").textContent=t.L||""; $("legR").textContent=t.R||"";
+  $("tempo").value=t.bpm; $("tempoV").textContent=t.bpm;
+  renderList(); renderKeys();
+  $("npCode").textContent=codeOf(cur); $("npTitle").textContent=t.title; $("discLab").style.background=t.legend||"var(--mustard)";
+  if(announce) say(`${codeOf(cur)}. <b>${t.title}</b>${live&&t.period==="month"?", "+niceDate(t):""}. ${t.about}`+(tour?" "+t.hear:""),true, `${codeOf(cur)}. ${t.title}. `+(tour?firstSentence(t.about)+" "+firstSentence(t.hear):firstSentence(t.about)));
+  if(playing && ac) nextTime=ac.currentTime+.05;
+}
+function setPlay(on){
+  initAudio(); ac.resume(); playing=on; $("playBtn").setAttribute("aria-pressed",on); $("playBtn").textContent=on?"Pause":"Play"; $("logo").classList.toggle("spin",on);
+  if(on){nextTime=ac.currentTime+.05; if(TRACKS[cur].type==="video")vid.play().catch(()=>{}); timer=timer||setInterval(tick,25)}
+  else{clearInterval(timer);timer=null; vid.pause(); if("speechSynthesis" in window)speechSynthesis.cancel(); if(master)master.gain.value=volNow()}
+  $("startOverlay").hidden=true;
+}
+function setExplore(on){explore=on;$("exploreBtn").setAttribute("aria-pressed",on);$("badge").textContent=on?"Explore · drag a finger, or use the arrow keys":"Scan · tap to pause · swipe for next"; $("stage").classList.toggle("exploring",on);
+  if(on){endTour();if(playing)setPlay(false);vid.pause();sample();say("Explore by touch. Drag a finger over the picture, or use the arrow keys, to hear any spot. Lift your finger to have it described.",true)}
+  else say("Scan mode. Press space to play.",true)}
+
+// ---------- Guided tour ----------
+function startTour(){ tour=true; $("tourBtn").setAttribute("aria-pressed","true"); if(explore){explore=false;$("exploreBtn").setAttribute("aria-pressed","false");$("stage").classList.remove("exploring");$("badge").textContent="Scan · tap to pause · swipe for next"} load(0,true); setPlay(true) }
+function endTour(){ tour=false; $("tourBtn").setAttribute("aria-pressed","false") }
+function tourNext(){ if(!tour) return; let n=cur+1; while(n<TRACKS.length&&TRACKS[n].group==="own") n++;
+  if(n>=TRACKS.length){ endTour(); setPlay(false); say("That was the tour. Pick any track, change the date on the live ones, or press E to explore by touch.",true); return }
+  load(n,true) }
+
+// ---------- Live data: dates and play-a-year ----------
+function setYear(on){ yearOn=on; $("yearBtn").setAttribute("aria-pressed",on); $("yearBtn").textContent=on?"Stop the year":"Play a whole year";
+  if(!on) return; const T=TRACKS[cur], y=monVal.split("-")[0]; yearIdx=+monVal.split("-")[1]-1;
+  yearFrames=MONTHS.map((_,m)=>{const im=new Image(); im.crossOrigin="anonymous"; im.src=gibs(T.layer,`${y}-${String(m+1).padStart(2,"0")}-01`); return im});
+  endTour(); step=0; if(!playing) setPlay(true); say(`Playing every month of ${y}. One month per sweep, starting in ${MONTHS[yearIdx]}.`,true) }
+function nextMonth(){ yearIdx=(yearIdx+1)%12; const y=monVal.split("-")[0]; monVal=`${y}-${String(yearIdx+1).padStart(2,"0")}`; $("mon").value=monVal;
+  const f=yearFrames[yearIdx]; if(f&&f.complete&&f.naturalWidth){ img.src=f.src; $("dateBadge").textContent=niceDate(TRACKS[cur]); say(`${MONTHS[yearIdx]}`,false) } }
+$("day").value=dayVal; $("mon").value=monVal;
+{const d=new Date().toISOString().slice(0,10); $("day").max=d; $("mon").max=new Date(Date.now()-45*864e5).toISOString().slice(0,7)}
+$("day").onchange=e=>{ if(!e.target.value) return; dayVal=e.target.value; latestOn=false; setLiveImage(); say(`Loading ${niceDate(TRACKS[cur])} from NASA.`,true) };
+$("latestBtn").onclick=()=>{ latestOn=true; setLiveImage(); say("Showing the newest image NASA has published. It will update itself.",true) };
+$("mon").onchange=e=>{ if(!e.target.value) return; monVal=e.target.value; setYear(false); setLiveImage(); say(`Loading ${niceDate(TRACKS[cur])} from NASA.`,true) };
+$("yearBtn").onclick=()=>setYear(!yearOn);
+img.addEventListener("error",()=>{ if(TRACKS[cur].type==="gibs") say("NASA has no image for that date. Try another date.",true) });
+
+// ---------- Your own frame ----------
+$("file").onchange=e=>{ const f=e.target.files[0]; if(!f) return; const url=URL.createObjectURL(f), isV=f.type.startsWith("video");
+  const t={id:"own",group:"own",title:f.name.replace(/\.[^.]+$/,"").slice(0,40),short:"Your file, sonified by color",src:url,type:isV?"video":"image",srcName:"your file",
+    about:"Your own image or video. The Jukebox reads its colors and brightness, so any NASA visualization frame can be heard.",
+    legend:"linear-gradient(90deg,#3b8fe0,#39e65a,#ffe14d,#ff6a3d)",L:"cool colors",R:"warm colors",
+    hear:"Red and orange areas play horns, green areas are plucked, blue areas ring as bells, and white areas are breathy air. Brighter means louder and higher.",
+    value:BRIGHT,scale:"majPent",root:50,mood:"airy",bpm:84};
+  const old=TRACKS.findIndex(x=>x.group==="own"); if(old>=0) TRACKS.splice(old,1); TRACKS.push(t); endTour(); load(TRACKS.length-1,true); e.target.value="" };
+
+// ---------- Recording ----------
+function toggleRec(){
+  initAudio(); if(recorder){recorder.stop();return}
+  chunks=[]; const mime=MediaRecorder.isTypeSupported("audio/webm")?"audio/webm":"";
+  recorder=new MediaRecorder(recDest.stream,mime?{mimeType:mime}:{});
+  recorder.ondataavailable=e=>chunks.push(e.data);
+  recorder.onstop=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(chunks,{type:recorder.mimeType||"audio/webm"}));a.download=`earth-jukebox-${TRACKS[cur].id}.${(recorder.mimeType||"").includes("mp4")?"m4a":"webm"}`;a.click();recorder=null;$("recBtn").setAttribute("aria-pressed","false");$("recBtn").textContent="Record";say("Recording saved as an audio file.",true)};
+  recorder.start(); $("recBtn").setAttribute("aria-pressed","true"); $("recBtn").textContent="Stop and save"; if(!playing)setPlay(true);
+}
+
+// ---------- Wiring ----------
+let dial="", dialT=0;
+$("startBtn").onclick=()=>{setPlay(true);say(`<b>${TRACKS[cur].title}</b>. ${TRACKS[cur].about}`,true,`${TRACKS[cur].title}. ${firstSentence(TRACKS[cur].about)}`)};
+$("tourBtn0").onclick=startTour;
+$("tourBtn").onclick=()=>{ if(tour){endTour();setPlay(false)} else startTour() };
+$("playBtn").onclick=()=>{if(explore)setExplore(false);setPlay(!playing)};
+$("exploreBtn").onclick=()=>setExplore(!explore);
+$("describeBtn").onclick=()=>{sample();narrate(true)};
+$("recBtn").onclick=toggleRec;
+$("tempo").oninput=e=>$("tempoV").textContent=e.target.value;
+$("voiceSel").onchange=e=>{ voicePick=voices.find(v=>v.name===e.target.value)||voicePick; try{localStorage.setItem("ej-voice",voicePick.name)}catch(_){} say("This is the voice you will hear.",true) };
+$("vol").oninput=()=>{if(master)master.gain.value=volNow()};
+document.addEventListener("keydown",e=>{
+  const tg=e.target.tagName; if((tg==="INPUT"&&e.target.type!=="checkbox"&&e.target.type!=="file")||tg==="SELECT") return;
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  const k=e.key.toLowerCase();
+  if(/^[abc]$/.test(k)){ dial=k.toUpperCase(); clearTimeout(dialT); dialT=setTimeout(()=>{dial="";$("npCode").textContent=codeOf(cur)},2500); $("npCode").textContent=dial+"_"; return }
+  if(dial&&/^[0-9]$/.test(k)){ const code=dial+k; dial=""; clearTimeout(dialT); const i=TRACKS.findIndex((t,j)=>codeOf(j)===code);
+    if(i>=0){endTour();load(i,true)} else {$("npCode").textContent=codeOf(cur); say(`There is no selection ${code}.`,true)} return }
+  if(k===" "){ if(tg==="BUTTON") return; e.preventDefault();if(explore)setExplore(false);setPlay(!playing)}
+  else if(k==="n"){endTour();load(cur+1,true)} else if(k==="p"){endTour();load(cur-1,true)}
+  else if(k==="t"){ if(tour){endTour();setPlay(false)} else startTour() }
+  else if(k==="e")setExplore(!explore); else if(k==="d"){sample();narrate(true)} else if(k==="r")toggleRec();
+  else if(/^[1-4]$/.test(k)){const ks=TRACKS[cur].keys||GENERIC_KEYS; if(ks[+k-1]) audition(ks[+k-1])}
+  else if(explore&&e.key.startsWith("Arrow")){e.preventDefault();
+    if(e.key==="ArrowLeft")cursor.x=Math.max(0,cursor.x-1/COLS); if(e.key==="ArrowRight")cursor.x=Math.min(.999,cursor.x+1/COLS);
+    if(e.key==="ArrowUp")cursor.y=Math.max(0,cursor.y-1/ROWS); if(e.key==="ArrowDown")cursor.y=Math.min(.999,cursor.y+1/ROWS);
+    probe(cursor.x,cursor.y,true)}
+});
+vid.addEventListener("error",()=>{ if(TRACKS[cur].type==="video"&&vid.getAttribute("src")) say(`Could not load the video for ${TRACKS[cur].title}.`,true)});
+load(0,false); requestAnimationFrame(draw);
+
+// ---------- Scroll story: the picture zooms out, then your scrolling drags the needle and plays the map ----------
+{
+  const hero=$("hero"), scrub=$("scrub"), heroImg=$("heroImg"), heroTxt=$("heroTxt"), simg=$("scrubImg"), scv=$("scrubCv"), sc2=scv.getContext("2d"), cards=[...document.querySelectorAll(".scard")];
+  const ST=TRACKS.find(t=>t.id==="aerosols"); let sGrid=null, lastCol=-1, raf=0; const trail=[];
+  const prog=el=>{const r=el.getBoundingClientRect(); return clamp(-r.top/Math.max(1,r.height-innerHeight))};
+  const ready=()=>{ if(!sGrid&&simg.complete&&simg.naturalWidth) sGrid=readGrid(simg,ST); return !!sGrid };
+  function story(){
+    const hp=prog(hero); heroImg.style.transform=`scale(${1.25-.25*hp})`; heroImg.style.filter=`brightness(${.8-.5*hp})`;
+    heroTxt.style.transform=`translateY(${-hp*18}vh) scale(${1-hp*.12})`; heroTxt.style.opacity=clamp(1.7-hp*2.2);
+    const r=scrub.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight) return;
+    const sp=prog(scrub), stepN=Math.min(2,Math.floor(sp*3)); cards.forEach((c,i)=>c.classList.toggle("on",i===stepN));
+    const b=scv.getBoundingClientRect(), dpr=devicePixelRatio||1; if(scv.width!==Math.round(b.width*dpr)){scv.width=Math.round(b.width*dpr);scv.height=Math.round(b.height*dpr)}
+    sc2.setTransform(dpr,0,0,dpr,0,0); sc2.clearRect(0,0,b.width,b.height);
+    const x=sp*b.width, grd=sc2.createLinearGradient(x-90,0,x,0); grd.addColorStop(0,"rgba(255,244,214,0)"); grd.addColorStop(1,"rgba(255,244,214,.28)");
+    sc2.fillStyle=grd; sc2.fillRect(x-90,0,90,b.height); sc2.fillStyle="#ff5a36"; sc2.fillRect(x-1.5,0,3,b.height);
+    if(!ready()) return;
+    const col=Math.min(COLS-1,Math.floor(sp*COLS)), cw=b.width/COLS, ch=b.height/ROWS;
+    if(col!==lastCol){ lastCol=col; const cells=[];
+      for(let y=0;y<ROWS;y++){const c=sGrid[y*COLS+col], cl=classifyCell(ST,c); if(cl) cells.push({y,c,cl,sal:Math.max(c.v,.3)*(.4+Math.max(c.l,c.s*.6))})}
+      cells.sort((a,b)=>b.sal-a.sal); const pick=[]; for(const k of cells){ if(!pick.some(p=>p.cl.f===k.cl.f)) pick.push(k); if(pick.length>1) break }
+      $("scrubRead").textContent=pick.length?pick.map(k=>`${k.cl.label} → ${INST[k.cl.f]}`).join("  ·  "):"clear air → silence";
+      pick.forEach(k=>trail.push({x:col,y:k.y,label:k.cl.label,born:performance.now()}));
+      if(ac&&ac.state==="running"&&!playing&&sp>0&&sp<1){ const sc=SCALES[ST.scale], t=ac.currentTime+.01;
+        pick.forEach(k=>voice(k.cl.f,degree(ST,Math.round(k.c.v*sc.length*2)+Math.round((ROWS-1-k.y)/ROWS*sc.length*.5)),t,.2+k.sal*.5,(col/(COLS-1))*1.6-.8,k.c.s*.6+k.c.l*.4)) }
+    }
+    const now=performance.now(); sc2.font=`600 ${Math.max(10,Math.min(13,b.width/70))}px "IBM Plex Mono",monospace`; sc2.textBaseline="middle";
+    for(let i=trail.length-1;i>=0;i--){ const T=trail[i], age=(now-T.born)/1400; if(age>1){trail.splice(i,1);continue}
+      const cx=(T.x+.5)*cw, cy=(T.y+.5)*ch; sc2.strokeStyle=`rgba(255,201,60,${1-age})`; sc2.lineWidth=2.5; sc2.beginPath(); sc2.arc(cx,cy,6+age*26,0,6.283); sc2.stroke();
+      if(age<.6){ sc2.fillStyle=`rgba(255,244,214,${1-age/.6})`; const right=cx<b.width-150; sc2.textAlign=right?"left":"right"; sc2.fillText(T.label.toUpperCase(),cx+(right?14:-14),cy) } }
+    if(trail.length&&!raf) raf=requestAnimationFrame(()=>{raf=0;story()});
+  }
+  const kick=()=>{ if(!raf) raf=requestAnimationFrame(()=>{raf=0;story()}) };
+  addEventListener("scroll",kick,{passive:true}); addEventListener("resize",kick); simg.addEventListener("load",kick); story();
+  $("scrubSound").onclick=e=>{ initAudio(); ac.resume(); e.currentTarget.textContent="Sound is on. Scroll slowly."; e.currentTarget.setAttribute("aria-pressed","true") };
+  // sections ease in as they arrive
+  const rv=[...document.querySelectorAll(".rv")];
+  if("IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches){
+    const io=new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting){en.target.classList.add("in");io.unobserve(en.target)} }),{threshold:.06});
+    rv.forEach(el=>io.observe(el));
+  } else rv.forEach(el=>el.classList.add("in"));
+}
+</script>
+</body>
+</html>
